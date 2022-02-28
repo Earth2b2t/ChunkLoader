@@ -39,13 +39,7 @@ public class ChunkLoader {
         for (int i = 0; i < 4 * WORLD_SIZE * WORLD_SIZE; i++) {
             int chunkX = i % (2 * WORLD_SIZE) - WORLD_SIZE;
             int chunkZ = i / (2 * WORLD_SIZE) - WORLD_SIZE;
-            chunkProviderClient.loadChunk(-chunkX, chunkZ);
+            chunkProviderClient.loadChunk(chunkX, chunkZ);
         }
     }
-
-//    @SubscribeEvent
-//    public void onLoadChunk(ChunkEvent.Load event) {
-//        Chunk chunk = event.getChunk();
-//        logger.info("Loaded Chunk: " + chunk.x + " " + chunk.z);
-//    }
 }
