@@ -49,7 +49,7 @@ public class ChunkLoader {
     public void onTick(TickEvent.ClientTickEvent event) {
         if (chunkProviderClient == null) return;
         if (index > 4 * WORLD_SIZE * WORLD_SIZE) return;
-        for (int j = 0; j < 50; j++) { // 1 tick 50 chunk
+        for (int j = 0; j < 100; j++) { // 1 tick 50 chunk
             int chunkX = index % (2 * WORLD_SIZE) - WORLD_SIZE;
             int chunkZ = index / (2 * WORLD_SIZE) - WORLD_SIZE;
             chunkProviderClient.loadChunk(chunkX, chunkZ);
