@@ -10,8 +10,12 @@ import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Mod(modid = ChunkLoader.MOD_ID, name = ChunkLoader.MOD_NAME, version = ChunkLoader.VERSION)
 public class ChunkLoader {
@@ -20,6 +24,10 @@ public class ChunkLoader {
     public static final String MOD_ID = "chunkloader";
     public static final String MOD_NAME = "ChunkLoader";
     public static final String VERSION = "1.0.0";
+
+    private final int WORLD_SIZE = 100000 >> 4;
+    private ChunkProviderClient chunkProviderClient;
+    private int index;
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -33,13 +41,19 @@ public class ChunkLoader {
 
         World world = event.getWorld();
         if (!(world.getChunkProvider() instanceof ChunkProviderClient)) return;
-        ChunkProviderClient chunkProviderClient = (ChunkProviderClient) world.getChunkProvider();
+        chunkProviderClient = (ChunkProviderClient) world.getChunkProvider();
+        index = 0;
+    }
 
-        int WORLD_SIZE = 100000 >> 4;
-        for (int i = 0; i < 4 * WORLD_SIZE * WORLD_SIZE; i++) {
-            int chunkX = i % (2 * WORLD_SIZE) - WORLD_SIZE;
-            int chunkZ = i / (2 * WORLD_SIZE) - WORLD_SIZE;
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent event) {
+        if (chunkProviderClient == null) return;
+        if (index > 4 * WORLD_SIZE * WORLD_SIZE) return;
+        for (int j = 0; j < 50; j++) { // 1 tick 50 chunk
+            int chunkX = index % (2 * WORLD_SIZE) - WORLD_SIZE;
+            int chunkZ = index / (2 * WORLD_SIZE) - WORLD_SIZE;
             chunkProviderClient.loadChunk(chunkX, chunkZ);
+            index++;
         }
     }
 }
