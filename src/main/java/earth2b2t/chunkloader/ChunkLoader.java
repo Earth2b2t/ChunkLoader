@@ -1,9 +1,11 @@
 package earth2b2t.chunkloader;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.ChunkProviderClient;
+import net.minecraft.util.text.ChatType;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -13,9 +15,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Mod(modid = ChunkLoader.MOD_ID, name = ChunkLoader.MOD_NAME, version = ChunkLoader.VERSION)
 public class ChunkLoader {
@@ -54,6 +53,19 @@ public class ChunkLoader {
             int chunkZ = index / (2 * WORLD_SIZE) - WORLD_SIZE;
             chunkProviderClient.loadChunk(chunkX, chunkZ);
             index++;
+
+            if (index % 10000 == 0) {
+                Minecraft.getMinecraft().ingameGUI.addChatMessage(
+                        ChatType.SYSTEM,
+                        new TextComponentString("[ChunkLoader]: CurrentIndex: " + index + ", ChunkX: " + chunkX + ", ChunkZ: " + chunkZ)
+                );
+            }
         }
+    }
+
+    @SubscribeEvent
+    public void onLoadChunk(ChunkEvent.Load event) {
+        if (chunkProviderClient == null) return;
+        chunkProviderClient.unloadChunk(event.getChunk().x, event.getChunk().z);
     }
 }
